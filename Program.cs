@@ -13,15 +13,12 @@ var configuration = builder.Configuration;
 var config = new TypeAdapterConfig();
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
-builder.Services.AddDbContext<TodoContext>(builder => 
-builder.UseSqlite(configuration.GetConnectionString("TodoDbConnection"))//,
-    //contextLifetime: ServiceLifetime.Singleton
-    );
 
+builder.Services.AddDbContext<TodoContext>(builder => 
+    builder.UseSqlite(configuration.GetConnectionString("TodoDbConnection"))
+);
 
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
-
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

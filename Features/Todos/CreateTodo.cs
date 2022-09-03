@@ -1,10 +1,8 @@
 ﻿using MediatR;
 using TodoMinimalApi.Contexts;
-using System.Collections.Generic;
-using Mapster;
-using Microsoft.EntityFrameworkCore;
 using MapsterMapper;
 using TodoMinimalApi.Entities.Todos;
+using TodoMinimalApi.Features.Todos.Dtos;
 
 namespace TodoMinimalApi.Features.Todos
 {
