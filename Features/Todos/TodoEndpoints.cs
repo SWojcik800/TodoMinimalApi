@@ -40,6 +40,14 @@ namespace TodoMinimalApi.Features.Todos
                 return todos;
             });
 
+            app.MapPut("/todos/update", async ([FromServices] IMediator mediator, UpdateTodoDto updateDto) =>
+            {
+                await mediator.Send(new UpdateTodo()
+                {
+                    Dto = updateDto
+                });
+            });
+
             app.MapDelete("/todos/delete", async ([FromServices] IMediator mediator, long id) =>
                 {
                     await mediator.Send(new DeleteTodo()
