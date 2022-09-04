@@ -1,4 +1,5 @@
-﻿using TodoMinimalApi.Features.Todos;
+﻿using TodoMinimalApi.Features.Authorization;
+using TodoMinimalApi.Features.Todos;
 
 namespace TodoMinimalApi
 {
@@ -6,6 +7,7 @@ namespace TodoMinimalApi
     {
         public static void AddApplicationEndpoints(this WebApplication app)
         {
+            app.AddAppAuthorization();
             app.AddTodo();
         }
 

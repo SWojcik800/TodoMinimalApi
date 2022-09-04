@@ -11,16 +11,12 @@ namespace TodoMinimalApi.Middleware
             {
                 await next(context);
             }
-            catch (NotFoundException e)
+            catch (ApplicationExceptionBase e)
             {
+                context.Response.StatusCode = e.HttpStatusCode;
+            }
+           
 
-                context.Response.StatusCode = 404;
-            }
-            catch (BadRequestException e)
-            {
-                context.Response.StatusCode = 400;
-            }
-            
         }
     }
 }

@@ -5,23 +5,24 @@ using Mapster;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using TodoMinimalApi.Features.Todos.Dtos;
+using TodoMinimalApi.Common.Response;
 
 namespace TodoMinimalApi.Features.Todos
 {
-    public class GetAllTodos : IRequest<List<TodoDto>>
+    public class GetAllTodos : IRequest<PaginatedResponse<TodoDto>>
     {
         public int SkipCount { get; set; }     
         public int MaxResultCount { get; set; }
     }
 
-    public class GetAllTodosHandler : IRequestHandler<GetAllTodos, List<TodoDto>>
+    public class GetAllTodosHandler : IRequestHandler<GetAllTodos, PaginatedResponse<TodoDto>>
     {
         private readonly TodoContext _context;
         public GetAllTodosHandler(TodoContext context)
         {
            _context = context;
         }
-        public async Task<List<TodoDto>> Handle(GetAllTodos request, CancellationToken cancellationToken)
+        public async Task<PaginatedResponse<TodoDto>> Handle(GetAllTodos request, CancellationToken cancellationToken)
         {
             
            var todos = await _context.Todos
@@ -31,7 +32,13 @@ namespace TodoMinimalApi.Features.Todos
                 .ProjectToType<TodoDto>()
                 .ToListAsync();
 
-            return todos;
+            var totalCount = await _context.Todos.CountAsync();
+
+            return new PaginatedResponse<TodoDto>
+            {
+                TotalCount = totalCount,
+                Items = todos
+            };
         }
     }
 }

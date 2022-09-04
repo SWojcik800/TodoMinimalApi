@@ -1,8 +1,8 @@
 ﻿namespace TodoMinimalApi.Common.Exceptions
 {
-    public class NotFoundException : Exception
+    public class NotFoundException : ApplicationExceptionBase
     {
-        public NotFoundException(string? message) : base(message)
+        public NotFoundException(string? message) : base(message, 404)
         {
         }
     }

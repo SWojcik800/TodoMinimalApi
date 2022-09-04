@@ -1,6 +1,7 @@
 ﻿
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using TodoMinimalApi.Common.Response;
 using TodoMinimalApi.Features.Todos.Dtos;
 
 namespace TodoMinimalApi.Features.Todos
@@ -21,23 +22,21 @@ namespace TodoMinimalApi.Features.Todos
                 });
 
                 return todos;
-            });
+            }).Produces<PaginatedResponse<TodoDto>>();
 
             app.MapGet("/todos/get", async ([FromServices] IMediator mediator, [FromQuery] long id) =>
             {
                 var todo = await mediator.Send(new GetTodo() { Id = id });
                 return todo;
-            });
+            }).Produces<TodoDto>();
 
 
             app.MapPost("/todos/create", async ([FromServices] IMediator mediator, CreateTodoDto dto) =>
             {
-                var todos = await mediator.Send(new CreateTodo()
+                await mediator.Send(new CreateTodo()
                 {
                     CreateDto = dto
                 });
-
-                return todos;
             });
 
             app.MapPut("/todos/update", async ([FromServices] IMediator mediator, UpdateTodoDto updateDto) =>
