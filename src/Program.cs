@@ -37,7 +37,10 @@ builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options => 
+    {
+        options.User.RequireUniqueEmail = true;
+    })
     .AddEntityFrameworkStores<TodoContext>()
     .AddDefaultTokenProviders();
 
