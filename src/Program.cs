@@ -15,11 +15,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoMinimalApi.Features.Authorization.Dtos;
+using TodoMinimalApi.Features.Authorization.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddHttpContextAccessor();
 var config = new TypeAdapterConfig();
 builder.Services.AddSingleton(config);
 builder.Services.AddScoped<IMapper, ServiceMapper>();
@@ -28,8 +31,11 @@ builder.Services.AddDbContext<TodoContext>(builder =>
     builder.UseSqlite(configuration.GetConnectionString("TodoDbConnection"))
 );
 
+builder.Services.AddScoped<ISessionService, SessionService>();
+
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
 
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<TodoContext>()
@@ -66,6 +72,7 @@ builder.Services.AddSwaggerGen(x =>
 
 var jwtConfig = new JwtTokenSettings();
 configuration.GetSection("Jwt").Bind(jwtConfig);
+builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

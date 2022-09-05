@@ -14,6 +14,7 @@ namespace TodoMinimalApi.Middleware
             catch (ApplicationExceptionBase e)
             {
                 context.Response.StatusCode = e.HttpStatusCode;
+                await context.Response.WriteAsync(e.Message);
             }
            
 

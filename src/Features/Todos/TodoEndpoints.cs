@@ -15,7 +15,7 @@ namespace TodoMinimalApi.Features.Todos
                 [FromQuery] int skipCount,
                 [FromQuery] int maxResultCount) =>
             {
-                var todos = await mediator.Send(new GetAllTodos()
+                var todos = await mediator.Send(new GetUserTodos()
                 {
                     SkipCount = skipCount,
                     MaxResultCount = maxResultCount,
@@ -33,6 +33,7 @@ namespace TodoMinimalApi.Features.Todos
 
             app.MapPost("/todos/create", async ([FromServices] IMediator mediator, CreateTodoDto dto) =>
             {
+          
                 await mediator.Send(new CreateTodo()
                 {
                     CreateDto = dto

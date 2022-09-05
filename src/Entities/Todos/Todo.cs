@@ -1,4 +1,6 @@
-﻿using TodoMinimalApi.Common;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using TodoMinimalApi.Common;
+using TodoMinimalApi.Entities.Account;
 
 namespace TodoMinimalApi.Entities.Todos
 {
@@ -12,5 +14,7 @@ namespace TodoMinimalApi.Entities.Todos
         public string Name { get; set; }
         public string Description { get; set; }
         public TodoState TodoState { get; set; }
+        public string UserId { get; set; }
+        public virtual User User { get; set; }
     }
 }

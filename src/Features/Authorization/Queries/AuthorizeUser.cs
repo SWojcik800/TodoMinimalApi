@@ -19,13 +19,15 @@ namespace TodoMinimalApi.Features.Authorization.Queries
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly JwtTokenSettings _tokenSettings;
         public AuthorizeUserHandler(
             UserManager<User> userManager,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            JwtTokenSettings tokenSettings)
         {
             _userManager = userManager;
             _configuration = configuration;
-
+            _tokenSettings = tokenSettings;
         }
         public async Task<AuthorizeResponseDto> Handle(AuthorizeUser request, CancellationToken cancellationToken)
         {
@@ -40,11 +42,10 @@ namespace TodoMinimalApi.Features.Authorization.Queries
 
             var userRoles = await _userManager.GetRolesAsync(user);
 
-            var jwtConfig = new JwtTokenSettings();
-            _configuration.GetSection("Jwt").Bind(jwtConfig);
+
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtConfig.Secret));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_tokenSettings.Secret));
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = new ClaimsIdentity(new []
@@ -54,8 +55,8 @@ namespace TodoMinimalApi.Features.Authorization.Queries
                     new Claim("Roles", userRoles.ToString())
                 }),
                 Expires = DateTime.Now.AddHours(3),
-                Issuer = jwtConfig.Issuer,
-                Audience = jwtConfig.Audience,
+                Issuer = _tokenSettings.Issuer,
+                Audience = _tokenSettings.Audience,
                 SigningCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512)
             };
 
