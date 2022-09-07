@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
+using System.Linq;
 using TodoMinimalApi.Common.Exceptions;
 using TodoMinimalApi.Entities.Account;
 
@@ -34,12 +35,6 @@ namespace TodoMinimalApi.Features.Authorization.Commands
                 Email = request.Email,
                 UserName = request.Email
             }, request.Password);
-
-            if(result.Errors.Count() > 0)
-            {
-                throw new Exception(result.Errors.ToString());
-            }
-           
 
             return Unit.Value;
         }

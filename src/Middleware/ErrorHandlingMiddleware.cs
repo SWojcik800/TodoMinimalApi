@@ -1,4 +1,6 @@
-﻿using TodoMinimalApi.Common.Exceptions;
+﻿using FluentValidation;
+using TodoMinimalApi.Common.Exceptions;
+using TodoMinimalApi.Common.Response;
 
 namespace TodoMinimalApi.Middleware
 {
@@ -14,7 +16,19 @@ namespace TodoMinimalApi.Middleware
             catch (ApplicationExceptionBase e)
             {
                 context.Response.StatusCode = e.HttpStatusCode;
-                await context.Response.WriteAsync(e.Message);
+                await context.Response.WriteAsJsonAsync<ApiResponse>(new ApiResponse { 
+                    ErrorMessage = e.Message,
+                    IsError = true
+                
+                });
+            }
+            catch(ValidationException e)
+            {
+                context.Response.StatusCode = 400;
+
+                await context.Response.WriteAsJsonAsync<ApiResponse>(new ApiResponse { 
+                    ErrorMessage = e.Message,
+                    IsError = true });
             }
            
 

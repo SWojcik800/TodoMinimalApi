@@ -39,10 +39,7 @@ namespace TodoMinimalApi.Features.Authorization.Queries
                 throw new UnauthorizedException("Invalid login attempt");
             }
 
-
             var userRoles = await _userManager.GetRolesAsync(user);
-
-
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_tokenSettings.Secret));

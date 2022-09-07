@@ -16,6 +16,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using TodoMinimalApi.Features.Authorization.Dtos;
 using TodoMinimalApi.Features.Authorization.Services;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -33,6 +34,7 @@ builder.Services.AddDbContext<TodoContext>(builder =>
 
 builder.Services.AddScoped<ISessionService, SessionService>();
 
+builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
