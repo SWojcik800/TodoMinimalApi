@@ -4,6 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TodoMinimalApi.Common.Response;
 using TodoMinimalApi.Features.Todos.Dtos;
+using TodoMinimalApi.Features.Todos.Queries;
 using TodoMinimalApi.Features.Todos.Validators;
 
 namespace TodoMinimalApi.Features.Todos
@@ -13,18 +14,29 @@ namespace TodoMinimalApi.Features.Todos
         public static void AddTodo(this WebApplication app)
         {
 
-            app.MapGet("/todos", async ([FromServices] IMediator mediator,
-                [FromQuery] int skipCount,
-                [FromQuery] int maxResultCount) =>
+            app.MapGet("/todos/getUserPaginatedTodos", async ([FromServices] IMediator mediator,
+                [FromQuery] int? skipCount,
+                [FromQuery] int? maxResultCount) =>
             {
-                var todos = await mediator.Send(new GetUserTodos()
-                {
-                    SkipCount = skipCount,
-                    MaxResultCount = maxResultCount,
-                });
+                var request = new GetPaginatedUserTodos();
+
+                if (skipCount is not null)
+                    request.SkipCount = (int)skipCount;
+                if (maxResultCount is not null)
+                    request.MaxResultCount = (int)maxResultCount;
+
+                var todos = await mediator.Send(request);
 
                 return new ApiResponse<PaginatedResponse<TodoDto>>(todos);
             }).Produces<PaginatedResponse<TodoDto>>();
+
+            app.MapGet("/todos/getUserTodos", async ([FromServices] IMediator mediator) =>
+            {  
+                var todos = await mediator.Send(new GetUserTodos());
+
+                return new ApiResponse<List<TodoDto>>(todos);
+            }).Produces<PaginatedResponse<TodoDto>>();
+
 
             app.MapGet("/todos/get", async ([FromServices] IMediator mediator, [FromQuery] long id) =>
             {
@@ -59,6 +71,22 @@ namespace TodoMinimalApi.Features.Todos
                 await mediator.Send(new UpdateTodo()
                 {
                     Dto = updateDto
+                });
+
+                return new ApiResponse();
+            });
+
+            app.MapPut("/todos/changeStatus", async (
+                [FromServices] IMediator mediator,
+                 [FromServices] ChangeTodoStateValidator validator,
+                ChangeTodoStatusDto changeStatusDto) =>
+            {
+                await validator.ValidateAndThrowAsync(changeStatusDto);
+
+                await mediator.Send(new ChangeTodoStatus()
+                {
+                    Id = changeStatusDto.Id,
+                    TodoState = changeStatusDto.TodoState
                 });
 
                 return new ApiResponse();

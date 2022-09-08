@@ -1,52 +1,40 @@
-﻿using MediatR;
-using TodoMinimalApi.Contexts;
-using System.Collections.Generic;
-using Mapster;
+﻿using Mapster;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using TodoMinimalApi.Features.Todos.Dtos;
-using TodoMinimalApi.Common.Response;
+using TodoMinimalApi.Contexts;
 using TodoMinimalApi.Features.Authorization.Services;
+using TodoMinimalApi.Features.Todos.Dtos;
 
-namespace TodoMinimalApi.Features.Todos
+namespace TodoMinimalApi.Features.Todos.Queries
 {
-    public class GetUserTodos : IRequest<PaginatedResponse<TodoDto>>
+    public class GetUserTodos : IRequest<List<TodoDto>>
     {
-        public int SkipCount { get; set; }     
-        public int MaxResultCount { get; set; }
     }
 
-    public class GetUserTodosHandler : IRequestHandler<GetUserTodos, PaginatedResponse<TodoDto>>
+    public class GetUserTodosHandler : IRequestHandler<GetUserTodos, List<TodoDto>>
     {
         private readonly TodoContext _context;
         private readonly ISessionService _session;
         public GetUserTodosHandler(
-            TodoContext context,
-            ISessionService session)
+         TodoContext context,
+         ISessionService session)
         {
-           _context = context;
-           _session = session;
+            _context = context;
+            _session = session;
         }
-        public async Task<PaginatedResponse<TodoDto>> Handle(GetUserTodos request, CancellationToken cancellationToken)
+        public async Task<List<TodoDto>> Handle(GetUserTodos request, CancellationToken cancellationToken)
         {
-            
-           var todos = await _context.Todos
-                .AsNoTracking()
-                .Skip(request.SkipCount)
-                .Take(request.MaxResultCount)
-                .Where(t => t.User.Id == _session.GetUserId())
-                .ProjectToType<TodoDto>()
-                .ToListAsync();
+            var todos = await _context.Todos
+             .AsNoTracking()
+             .Where(t => t.User.Id == _session.GetUserId())
+             .ProjectToType<TodoDto>()
+             .ToListAsync();
 
-            var totalCount = await _context.Todos
-                .Where(t => t.User.Id == _session.GetUserId())
-                .CountAsync();
-
-            return new PaginatedResponse<TodoDto>
-            {
-                TotalCount = totalCount,
-                Items = todos
-            };
+            return todos;
         }
     }
+
+   
+  
+    
 }
