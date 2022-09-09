@@ -3,6 +3,9 @@ using TodoMinimalApi.Common.Exceptions;
 
 namespace TodoMinimalApi.Features.Authorization.Services
 {
+    /// <summary>
+    /// Retrieves user claims from JWT token
+    /// </summary>
     public class SessionService : ISessionService
     {
         private readonly IHttpContextAccessor _contextAccessor;

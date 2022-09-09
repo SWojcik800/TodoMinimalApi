@@ -4,6 +4,9 @@ using TodoMinimalApi.Common.Response;
 
 namespace TodoMinimalApi.Middleware
 {
+    /// <summary>
+    /// Middleware handling custom exceptions
+    /// </summary>
     public class ErrorHandlingMiddleware : IMiddleware
     {
  

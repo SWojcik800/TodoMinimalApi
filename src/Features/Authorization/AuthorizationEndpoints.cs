@@ -10,6 +10,9 @@ using TodoMinimalApi.Features.Authorization.Validators;
 
 namespace TodoMinimalApi.Features.Authorization
 {
+    /// <summary>
+    /// Registers endpoints for authorization
+    /// </summary>
     public static class AuthorizationEndpoints
     {
         public static void AddAppAuthorization(this WebApplication app)

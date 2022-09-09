@@ -1,5 +1,9 @@
 ﻿namespace TodoMinimalApi.Common.Response
 {
+    /// <summary>
+    /// Base format of api response
+    /// </summary>
+    /// <typeparam name="T">Type of response data</typeparam>
     public class ApiResponse<T>
     {
         public ApiResponse() {}

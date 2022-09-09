@@ -9,6 +9,9 @@ using TodoMinimalApi.Features.Todos.Validators;
 
 namespace TodoMinimalApi.Features.Todos
 {
+    /// <summary>
+    /// Registers endpoints for todos
+    /// </summary>
     public static class TodoEndpoints
     {
         public static void AddTodo(this WebApplication app)
