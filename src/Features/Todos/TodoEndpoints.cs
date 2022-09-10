@@ -39,7 +39,6 @@ namespace TodoMinimalApi.Features.Todos
                 [FromServices] IMediator mediator,
                  CancellationToken cancellationToken) =>
             {
-                await Task.Delay(5000);
                 var todos = await mediator.Send(new GetUserTodos(), cancellationToken);
 
                 return new ApiResponse<List<TodoDto>>(todos);
