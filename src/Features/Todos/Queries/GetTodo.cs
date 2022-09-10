@@ -24,7 +24,7 @@ namespace TodoMinimalApi.Features.Todos
             var todo = await _context.Todos
                 .AsNoTracking()
                 .ProjectToType<TodoDto>()
-                .FirstOrDefaultAsync(x => x.Id == request.Id);
+                .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (todo is null)
                 throw new NotFoundException("Todo not found");

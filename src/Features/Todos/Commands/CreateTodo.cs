@@ -39,7 +39,7 @@ namespace TodoMinimalApi.Features.Todos
             todoEntity.User = todoUser;
 
             await _context.Todos.AddAsync(todoEntity);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

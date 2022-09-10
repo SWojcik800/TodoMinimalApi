@@ -31,7 +31,7 @@ namespace TodoMinimalApi.Features.Todos
             todoToUpdate.TodoState = dto.TodoState;
 
             _context.Todos.Update(todoToUpdate);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

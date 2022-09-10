@@ -22,7 +22,7 @@ namespace TodoMinimalApi.Features.Todos
         }
         public async Task<Unit> Handle(ChangeTodoStatus request, CancellationToken cancellationToken)
         {
-            var todoToUpdate = await _context.Todos.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var todoToUpdate = await _context.Todos.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
             if (todoToUpdate is null)
                 throw new NotFoundException("Todo not found");
@@ -31,7 +31,7 @@ namespace TodoMinimalApi.Features.Todos
             todoToUpdate.TodoState = request.TodoState;
 
             _context.Todos.Update(todoToUpdate);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

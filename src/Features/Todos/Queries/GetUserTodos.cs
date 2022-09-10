@@ -28,7 +28,7 @@ namespace TodoMinimalApi.Features.Todos.Queries
              .AsNoTracking()
              .Where(t => t.User.Id == _session.GetUserId())
              .ProjectToType<TodoDto>()
-             .ToListAsync();
+             .ToListAsync(cancellationToken);
 
             return todos;
         }

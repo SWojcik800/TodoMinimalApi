@@ -25,7 +25,7 @@ namespace TodoMinimalApi.Features.Todos
                throw new NotFoundException("Todo not found");
 
             _context.Remove(todoToDelete);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

@@ -20,7 +20,8 @@ namespace TodoMinimalApi.Features.Authorization
             app.MapPost("/account/register", async (
                 [FromServices] IMediator mediator,
                 [FromServices] RegisterUserValidator validator,
-                [FromBody] RegisterUserDto dto) =>
+                [FromBody] RegisterUserDto dto,
+                CancellationToken cancellationToken) =>
             {
                 await validator.ValidateAndThrowAsync(dto);
 
@@ -29,19 +30,20 @@ namespace TodoMinimalApi.Features.Authorization
                     Email = dto.Email,
                     Password = dto.Password,
                     ConfirmPassword = dto.ConfirmPassword
-                });
+                }, cancellationToken);
 
                 return new ApiResponse();
             }).AllowAnonymous();
 
             app.MapPost("/account/authorize", async (
                 [FromServices] IMediator mediator,
-                [FromBody] LoginDto dto) =>
+                [FromBody] LoginDto dto,
+                CancellationToken cancellationToken) =>
             {
                 var result = await mediator.Send(new AuthorizeUser
                 {
                     LoginDto = new LoginDto(dto.Login, dto.Password)
-                });
+                }, cancellationToken);
 
                 return new ApiResponse<AuthorizeResponseDto>(result);
             }).AllowAnonymous()

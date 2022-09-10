@@ -17,9 +17,11 @@ namespace TodoMinimalApi.Features.Todos
         public static void AddTodo(this WebApplication app)
         {
 
-            app.MapGet("/todos/getUserPaginatedTodos", async ([FromServices] IMediator mediator,
+            app.MapGet("/todos/getUserPaginatedTodos", async (
+                [FromServices] IMediator mediator,
                 [FromQuery] int? skipCount,
-                [FromQuery] int? maxResultCount) =>
+                [FromQuery] int? maxResultCount,
+                CancellationToken cancellationToken) =>
             {
                 var request = new GetPaginatedUserTodos();
 
@@ -28,22 +30,28 @@ namespace TodoMinimalApi.Features.Todos
                 if (maxResultCount is not null)
                     request.MaxResultCount = (int)maxResultCount;
 
-                var todos = await mediator.Send(request);
+                var todos = await mediator.Send(request, cancellationToken);
 
                 return new ApiResponse<PaginatedResponse<TodoDto>>(todos);
             }).Produces<PaginatedResponse<TodoDto>>();
 
-            app.MapGet("/todos/getUserTodos", async ([FromServices] IMediator mediator) =>
-            {  
-                var todos = await mediator.Send(new GetUserTodos());
+            app.MapGet("/todos/getUserTodos", async (
+                [FromServices] IMediator mediator,
+                 CancellationToken cancellationToken) =>
+            {
+                await Task.Delay(5000);
+                var todos = await mediator.Send(new GetUserTodos(), cancellationToken);
 
                 return new ApiResponse<List<TodoDto>>(todos);
             }).Produces<PaginatedResponse<TodoDto>>();
 
 
-            app.MapGet("/todos/get", async ([FromServices] IMediator mediator, [FromQuery] long id) =>
+            app.MapGet("/todos/get", async (
+                [FromServices] IMediator mediator,
+                [FromQuery] long id,
+                 CancellationToken cancellationToken) =>
             {
-                var todo = await mediator.Send(new GetTodo() { Id = id });
+                var todo = await mediator.Send(new GetTodo() { Id = id }, cancellationToken);
                 return new ApiResponse<TodoDto>(todo);
                
             }).Produces<TodoDto>();
@@ -52,14 +60,15 @@ namespace TodoMinimalApi.Features.Todos
             app.MapPost("/todos/create", async (
                 [FromServices] IMediator mediator,
                 [FromServices] CreateTodoValidator validator,
-                CreateTodoDto dto) =>
+                CreateTodoDto dto,
+                CancellationToken cancellationToken) =>
             {
                 await validator.ValidateAndThrowAsync(dto);
 
                 await mediator.Send(new CreateTodo()
                 {
                     CreateDto = dto
-                });
+                }, cancellationToken);
 
                 return new ApiResponse();
             });
@@ -67,22 +76,24 @@ namespace TodoMinimalApi.Features.Todos
             app.MapPut("/todos/update", async (
                 [FromServices] IMediator mediator,
                 [FromServices] UpdateTodoValidator validator,
-                UpdateTodoDto updateDto) =>
+                UpdateTodoDto updateDto,
+                CancellationToken cancellationToken) =>
             {
                 await validator.ValidateAndThrowAsync(updateDto);
 
                 await mediator.Send(new UpdateTodo()
                 {
                     Dto = updateDto
-                });
+                }, cancellationToken);
 
                 return new ApiResponse();
             });
 
             app.MapPut("/todos/changeStatus", async (
                 [FromServices] IMediator mediator,
-                 [FromServices] ChangeTodoStateValidator validator,
-                ChangeTodoStatusDto changeStatusDto) =>
+                [FromServices] ChangeTodoStateValidator validator,
+                ChangeTodoStatusDto changeStatusDto,
+                CancellationToken cancellationToken) =>
             {
                 await validator.ValidateAndThrowAsync(changeStatusDto);
 
@@ -90,17 +101,20 @@ namespace TodoMinimalApi.Features.Todos
                 {
                     Id = changeStatusDto.Id,
                     TodoState = changeStatusDto.TodoState
-                });
+                }, cancellationToken);
 
                 return new ApiResponse();
             });
 
-            app.MapDelete("/todos/delete", async ([FromServices] IMediator mediator, long id) =>
+            app.MapDelete("/todos/delete", async (
+                [FromServices] IMediator mediator,
+                long id,
+                CancellationToken cancellationToken) =>
                 {
                     await mediator.Send(new DeleteTodo()
                     {
                         Id = id
-                    });
+                    }, cancellationToken);
 
                     return new ApiResponse();
                 });
