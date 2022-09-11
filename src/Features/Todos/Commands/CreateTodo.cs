@@ -44,7 +44,7 @@ namespace TodoMinimalApi.Features.Todos
 
             todoEntity.User = todoUser;
 
-            await _todosRepository.InsertAsync(todoEntity);
+            await _todosRepository.InsertAsync(todoEntity, cancellationToken);
             await _todosRepository.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;

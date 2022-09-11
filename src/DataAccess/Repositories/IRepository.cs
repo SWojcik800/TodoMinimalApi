@@ -9,7 +9,7 @@ namespace TodoMinimalApi.DataAccess.Repositories
         IQueryable<TEntity> GetAll();
         IQueryable<TEntity> GetAll(Expression<Func<TEntity, bool>> expression);
         void Insert(TEntity entity);
-        Task InsertAsync(TEntity entity);
+        Task InsertAsync(TEntity entity, CancellationToken cancellationToken);
         Task SaveChangesAsync(CancellationToken cancellationToken);
         void Update(TEntity entity);
     }

@@ -38,7 +38,7 @@ namespace TodoMinimalApi.DataAccess.Repositories
             _todoContext.Add(entity);
         }
 
-        public async Task InsertAsync(TEntity entity)
+        public async Task InsertAsync(TEntity entity, CancellationToken cancellationToken)
         {
             await _todoContext.AddAsync(entity);
         }
