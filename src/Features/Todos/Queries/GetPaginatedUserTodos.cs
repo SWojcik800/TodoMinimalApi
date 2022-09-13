@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using TodoMinimalApi.Features.Todos.Dtos;
 using TodoMinimalApi.Common.Response;
 using TodoMinimalApi.Features.Authorization.Services;
+using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Entities.Todos;
 
 namespace TodoMinimalApi.Features.Todos
 {
@@ -16,19 +18,19 @@ namespace TodoMinimalApi.Features.Todos
 
     public class GetPaginatedUserTodosHandler : IRequestHandler<GetPaginatedUserTodos, PaginatedResponse<TodoDto>>
     {
-        private readonly TodoContext _context;
+        private readonly IRepository<Todo, long> _todosRepository;
         private readonly ISessionService _session;
         public GetPaginatedUserTodosHandler(
-            TodoContext context,
-            ISessionService session)
+            IRepository<Todo, long> todosRepository,
+             ISessionService session)
         {
-           _context = context;
+           _todosRepository = todosRepository;
            _session = session;
         }
         public async Task<PaginatedResponse<TodoDto>> Handle(GetPaginatedUserTodos request, CancellationToken cancellationToken)
         {
             
-           var todos = await _context.Todos
+           var todos = await _todosRepository.GetAll()
                 .AsNoTracking()
                 .Skip(request.SkipCount)
                 .Take(request.MaxResultCount)
@@ -36,7 +38,7 @@ namespace TodoMinimalApi.Features.Todos
                 .ProjectToType<TodoDto>()
                 .ToListAsync();
 
-            var totalCount = await _context.Todos
+            var totalCount = await _todosRepository.GetAll()
                 .Where(t => t.User.Id == _session.GetUserId())
                 .CountAsync();
 

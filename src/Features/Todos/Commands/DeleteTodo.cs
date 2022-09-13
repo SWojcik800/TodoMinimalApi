@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TodoMinimalApi.Common.Exceptions;
 using TodoMinimalApi.Contexts;
+using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Entities.Todos;
 
 namespace TodoMinimalApi.Features.Todos
 {
@@ -12,20 +14,20 @@ namespace TodoMinimalApi.Features.Todos
 
     public class DeleteTodoHandler : IRequestHandler<DeleteTodo>
     {
-        private readonly TodoContext _context;
-        public DeleteTodoHandler(TodoContext context)
+        private readonly IRepository<Todo, long> _todosRepository;
+        public DeleteTodoHandler(IRepository<Todo, long> todosRepository)
         {
-            _context = context;
+            _todosRepository = todosRepository;
         }
         public async Task<Unit> Handle(DeleteTodo request, CancellationToken cancellationToken)
         {
-           var todoToDelete = await _context.Todos.FirstOrDefaultAsync(x => x.Id == request.Id);
+           var todoToDelete = await _todosRepository.GetAll().FirstOrDefaultAsync(x => x.Id == request.Id);
 
            if (todoToDelete is null)
                throw new NotFoundException("Todo not found");
 
-            _context.Remove(todoToDelete);
-            await _context.SaveChangesAsync(cancellationToken);
+            _todosRepository.Delete(todoToDelete);
+            await _todosRepository.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

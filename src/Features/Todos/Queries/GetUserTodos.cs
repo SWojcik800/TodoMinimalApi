@@ -2,6 +2,8 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TodoMinimalApi.Contexts;
+using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Entities.Todos;
 using TodoMinimalApi.Features.Authorization.Services;
 using TodoMinimalApi.Features.Todos.Dtos;
 
@@ -13,18 +15,18 @@ namespace TodoMinimalApi.Features.Todos.Queries
 
     public class GetUserTodosHandler : IRequestHandler<GetUserTodos, List<TodoDto>>
     {
-        private readonly TodoContext _context;
+        private readonly IRepository<Todo, long> _todosRepository;
         private readonly ISessionService _session;
         public GetUserTodosHandler(
-         TodoContext context,
+         IRepository<Todo, long> todosRepository,
          ISessionService session)
         {
-            _context = context;
+            _todosRepository = todosRepository;
             _session = session;
         }
         public async Task<List<TodoDto>> Handle(GetUserTodos request, CancellationToken cancellationToken)
         {
-            var todos = await _context.Todos
+            var todos = await _todosRepository.GetAll()
              .AsNoTracking()
              .Where(t => t.User.Id == _session.GetUserId())
              .ProjectToType<TodoDto>()

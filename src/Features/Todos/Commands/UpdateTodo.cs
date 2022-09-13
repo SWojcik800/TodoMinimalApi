@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TodoMinimalApi.Common.Exceptions;
 using TodoMinimalApi.Contexts;
+using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Entities.Todos;
 using TodoMinimalApi.Features.Todos.Dtos;
 
 namespace TodoMinimalApi.Features.Todos
@@ -13,14 +15,15 @@ namespace TodoMinimalApi.Features.Todos
 
     public class UpdateTodoHandler : IRequestHandler<UpdateTodo>
     {
-        private readonly TodoContext _context;
-        public UpdateTodoHandler(TodoContext context)
+        private readonly IRepository<Todo, long> _todosRepository;
+        public UpdateTodoHandler(IRepository<Todo, long> todosRepository)
         {
-            _context = context;
+            _todosRepository = todosRepository;
         }
         public async Task<Unit> Handle(UpdateTodo request, CancellationToken cancellationToken)
         {
-            var todoToUpdate = await _context.Todos.FirstOrDefaultAsync(x => x.Id == request.Dto.Id);
+            var todoToUpdate = await _todosRepository.GetAll()
+                .FirstOrDefaultAsync(x => x.Id == request.Dto.Id);
 
             if (todoToUpdate is null)
                 throw new NotFoundException("Todo not found");
@@ -30,8 +33,8 @@ namespace TodoMinimalApi.Features.Todos
             todoToUpdate.Description = dto.Description;
             todoToUpdate.TodoState = dto.TodoState;
 
-            _context.Todos.Update(todoToUpdate);
-            await _context.SaveChangesAsync(cancellationToken);
+            _todosRepository.Update(todoToUpdate);
+            await _todosRepository.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }

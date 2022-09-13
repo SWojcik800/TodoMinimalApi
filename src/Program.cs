@@ -17,6 +17,8 @@ using System.Text;
 using TodoMinimalApi.Features.Authorization.Dtos;
 using TodoMinimalApi.Features.Authorization.Services;
 using FluentValidation;
+using TodoMinimalApi.DataAccess;
+using TodoMinimalApi.DataAccess.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -33,6 +35,7 @@ builder.Services.AddDbContext<TodoContext>(builder =>
 );
 
 builder.Services.AddScoped<ISessionService, SessionService>();
+builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(Assembly.GetExecutingAssembly());

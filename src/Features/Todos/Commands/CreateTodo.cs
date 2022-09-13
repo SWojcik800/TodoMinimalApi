@@ -4,6 +4,9 @@ using MapsterMapper;
 using TodoMinimalApi.Entities.Todos;
 using TodoMinimalApi.Features.Todos.Dtos;
 using TodoMinimalApi.Features.Authorization.Services;
+using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Entities.Account;
+using Microsoft.AspNetCore.Identity;
 
 namespace TodoMinimalApi.Features.Todos
 {
@@ -15,16 +18,19 @@ namespace TodoMinimalApi.Features.Todos
 
     public class CreateTodoHandler : IRequestHandler<CreateTodo>
     {
-        private readonly TodoContext _context;
+        private readonly IRepository<Todo, long> _todosRepository;
+        private readonly UserManager<User> _userManager;
         private readonly IMapper _mapper;
         private readonly ISessionService _session;
         public CreateTodoHandler(
-            TodoContext context,
+            IRepository<Todo, long> todosRepository,
+            UserManager<User> userManager,
             IMapper mapper,
             ISessionService session
             )
         {
-           _context = context;
+           _todosRepository = todosRepository;
+           _userManager = userManager;
            _mapper = mapper;
            _session = session;
         }
@@ -34,12 +40,12 @@ namespace TodoMinimalApi.Features.Todos
             var currentUserId = _session.GetUserId();
 
             var todoEntity = _mapper.Map<Todo>(request.CreateDto);
-            var todoUser = await _context.Users.FindAsync(currentUserId);
+            var todoUser = await _userManager.FindByIdAsync(currentUserId);
 
             todoEntity.User = todoUser;
 
-            await _context.Todos.AddAsync(todoEntity);
-            await _context.SaveChangesAsync(cancellationToken);
+            await _todosRepository.InsertAsync(todoEntity, cancellationToken);
+            await _todosRepository.SaveChangesAsync(cancellationToken);
 
             return Unit.Value;
         }
