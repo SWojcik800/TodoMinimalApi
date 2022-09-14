@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using TodoMinimalApi.Common.Exceptions;
+using TodoMinimalApi.Common.Settings;
 using TodoMinimalApi.Entities.Account;
 using TodoMinimalApi.Features.Authorization.Dtos;
 

@@ -1,4 +1,4 @@
-﻿namespace TodoMinimalApi.Features.Authorization.Dtos
+﻿namespace TodoMinimalApi.Common.Settings
 {
     public class JwtTokenSettings
     {

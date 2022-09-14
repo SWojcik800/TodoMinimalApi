@@ -19,6 +19,7 @@ using TodoMinimalApi.Features.Authorization.Services;
 using FluentValidation;
 using TodoMinimalApi.DataAccess;
 using TodoMinimalApi.DataAccess.Repositories;
+using TodoMinimalApi.Common.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -80,6 +81,7 @@ builder.Services.AddSwaggerGen(x =>
 
 var jwtConfig = new JwtTokenSettings();
 configuration.GetSection("Jwt").Bind(jwtConfig);
+
 builder.Services.AddSingleton(jwtConfig);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -107,8 +109,22 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularApp",
+        policy =>
+        {
+            var corsConfig = new CorsSettings();
+            configuration.GetSection("Cors").Bind(corsConfig);
+            policy.WithOrigins(corsConfig.Origins)
+            .WithMethods(corsConfig.Methods)
+            .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
 
+app.UseCors("AngularApp");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
